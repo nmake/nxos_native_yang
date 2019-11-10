@@ -8,6 +8,7 @@ No working knowledge of netconf or yang is necessary.
 
 - netconf enabled on the device
 - ncclient installed
+- Ansible 2.10 or later
 
 The role provide a number actions shown below:
 
