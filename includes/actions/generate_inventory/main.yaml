@@ -1,0 +1,19 @@
+- name: Ensure variables are set
+  assert:
+    that:
+    - inventory_path is defined
+
+- name: Create the destination directory
+  file:
+    path: "{{ inventory_path }}"
+    state: directory
+
+- name: Gather the facts from the current configuration
+  include_tasks: includes/actions/gather_facts/main.yaml
+
+- name: Add each resource file to the inventory path
+  copy:
+    content: "{{ {item: native_yang_facts[item]}|to_nice_yaml }}"
+    dest: "{{ inventory_path }}/{{ item }}.yaml"
+  check_mode: "{{ check_mode|default(False) }}"
+  loop: "{{ actual_resources }}"

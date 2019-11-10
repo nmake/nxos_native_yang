@@ -1,0 +1,21 @@
+
+- name: Use the platform facts module to retrieve the version
+  nxos_facts:
+    gather_subset:
+    - '!all'
+  when: ansible_net_version is not defined
+
+- name: Noramalize the version
+  set_fact:
+    version: "{{ ansible_net_version|regex_replace('[^a-zA-Z0-9]', '') }}"
+
+- name: Load the version specific variables
+  include_vars:
+    file: "defaults/nxos/{{ version }}/main.yaml"
+    name: nxos_native_yang
+  when: version in supported_versions
+
+- name: Inform the user if the version is not supported
+  fail:
+    msg: "Version {{ ansible_net_version }} is not supported."
+  when: version not in supported_versions

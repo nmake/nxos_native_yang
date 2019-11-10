@@ -1,0 +1,3 @@
+- name: Show the available resources
+  debug:
+    var: nxos_native_yang['available_resources']

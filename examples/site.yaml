@@ -1,0 +1,58 @@
+- hosts: nxos101
+  gather_facts: False
+  tasks:
+
+  - name: Show all the available resources for this device
+    include_role:
+      name: nxos_native_yang
+    vars:
+      action: get_available_resources
+
+  - name: Show the sample data structure for a resource
+    include_role:
+      name: nxos_native_yang
+    vars:
+      action: get_samples
+      resources:
+      - vtp-items
+
+  - name: Gather facts for specifc resources
+    include_role:
+      name: nxos_native_yang
+    vars:
+      action: gather_facts
+      resources:
+      - bd-items
+      - intf-items
+
+  - name: Generate an inventory file entry for the given resources
+    include_role:
+      name: nxos_native_yang
+    vars:
+      action: generate_inventory
+      inventory_path: "./inventory/host_vars/{{ inventory_hostname }}"
+      resources:
+      - all
+      - '!acl-items'
+
+  - name: Modify the inventory
+    pause:
+
+  - name: Load the inventory files
+    include_vars:
+      dir: "./inventory/host_vars/{{ inventory_hostname }}"
+      name: from_inventory
+
+  - name: Use the inventory to config the device
+    include_role:
+      name: nxos_native_yang
+    vars:
+      action: apply_configuration
+      check_mode: True
+      resources:
+      - name: "{{ inventory_entry['key'] }}"
+        config: "{{ inventory_entry['value'] }}"
+    with_dict: "{{ from_inventory }}"
+    loop_control:
+      loop_var: inventory_entry
+    when: inventory_entry['value']

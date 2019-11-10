@@ -1,0 +1,15 @@
+- name: Ensure variables are set
+  assert:
+    that:
+    - resources is defined
+
+- name: Check for minimum ansible version
+  assert:
+    that:
+    - ansible_version['major'] == 2 and ansible_version['minor'] >= 10
+
+- name: Include the task file for each resource
+  include_tasks: each_resource.yaml
+  loop: "{{ resources }}"
+  loop_control:
+    loop_var: resource

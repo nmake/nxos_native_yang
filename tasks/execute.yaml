@@ -1,0 +1,14 @@
+- name: Load the version specific variables
+  include_tasks: "{{ item }}"
+  when: nxos_native_yang is not defined
+  with_first_found:
+  - "includes/actions/load_version_vars/{{ ansible_network_os }}/main.yaml"
+  - "includes/actions/load_version_vars/unsupported_os.yaml"
+
+- name: Include the action specifc task file
+  include_tasks: "{{ action_file }}"
+  with_first_found:
+  - "includes/actions/{{ action }}/main.yaml"
+  - "includes/actions/unsupported_action.yaml"
+  loop_control:
+    loop_var: action_file

@@ -1,0 +1,24 @@
+- name: Ensure variables are set
+  assert:
+    that:
+    - "'name' in resource"
+    - "'config' in resource"
+
+- name: "Apply the {{ resource['name'] }} to the configuration"
+  netconf_config:
+    content: |
+      <config>
+        <System xmlns="http://cisco.com/ns/yang/cisco-nx-os-device">
+          {{ resource["config"]|dicttoxml(resource["name"]) }}
+        </System>
+      </config>
+    get_filter: |
+      <System xmlns="http://cisco.com/ns/yang/cisco-nx-os-device">
+          <{{ resource["name"] }}></{{ resource["name"] }}>
+      </System>
+    lock: never
+  check_mode: "{{ check_mode|default(False) }}"
+  vars:
+    ansible_connection: netconf
+    ansible_port: 830
+  register: result

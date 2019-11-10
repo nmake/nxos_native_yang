@@ -1,0 +1,2 @@
+- include: execute.yaml
+  when: action is defined

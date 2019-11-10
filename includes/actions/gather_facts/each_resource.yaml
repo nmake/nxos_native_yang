@@ -1,0 +1,12 @@
+- name: "Collect {{ resource }} from the device"
+  netconf_get:
+    source: running
+    filter: '<System xmlns="http://cisco.com/ns/yang/cisco-nx-os-device"><{{ resource }}></{{ resource }}></System>'
+  register: result
+  vars:
+    ansible_connection: netconf
+    ansible_port: 830
+
+- name: "Add {{ resource }} to 'native_yang_facts'"
+  set_fact:
+    native_yang_facts: "{{ native_yang_facts|default({})|combine({resource:(result['stdout']|xmltodict)['System'][resource]|default({})}) }}"

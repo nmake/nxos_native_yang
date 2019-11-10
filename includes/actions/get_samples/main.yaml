@@ -1,0 +1,13 @@
+
+- name: Build a list of resources
+  set_fact:
+    actual_resources: "{{ nxos_native_yang['available_resources']|
+                param_list_compare(resources|default([])) }}"
+
+- name: Filter the resource sample and set a 'sample' fact
+  set_fact:
+    samples: "{{ actual_resources|filter_samples(nxos_native_yang['sample']) }}"
+
+- name: Show the samples
+  debug:
+    var: samples

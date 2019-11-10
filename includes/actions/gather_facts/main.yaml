@@ -1,0 +1,10 @@
+- name: Build a list of resources
+  set_fact:
+    actual_resources: "{{ nxos_native_yang['available_resources']|
+                param_list_compare(resources|default([])) }}"
+
+- name: Include the task file for each resource
+  include_tasks: includes/actions/gather_facts/each_resource.yaml
+  loop: "{{ actual_resources }}"
+  loop_control:
+    loop_var: resource

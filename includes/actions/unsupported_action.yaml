@@ -1,0 +1,2 @@
+- fail:
+    msg: "Action '{{ action }}' is not supported."
