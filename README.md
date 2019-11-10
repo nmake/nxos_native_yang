@@ -4,9 +4,14 @@ This is an Ansible role used to push and pull the configuration from nexus devic
 
 No working knowledge of netconf or yang is necessary.
 
+## Prerequisits
+
+- netconf enabled on the device
+- ncclient installed
+
 The role provide a number actions shown below:
 
-## Show the supported resources availble for a given device
+## Show the supported resources available for a given device
 
 ```yaml
 
